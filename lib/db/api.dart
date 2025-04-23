@@ -164,7 +164,12 @@ class Api {
       );
     }
 
-    return Sewer.fromJson(jsonDecode(response.body));
+    try {
+      return Sewer.fromJson(jsonDecode(response.body));
+    }catch(e) {
+      return Sewer(id: 0, companyId: 1, name: "name", userId: 1);
+    }
+    
   }
 
   static Future<Order> getOrderById(int id) async {

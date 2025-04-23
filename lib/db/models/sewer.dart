@@ -4,23 +4,26 @@ class Sewer extends Model {
   final int id;
   final String name;
   final int userId;
-  final String? phone;
+  final int companyId;
+  final String? phoneNumber;
   final String? email;
 
   Sewer({
     required this.id,
     required this.name,
+    required this.companyId,
     required this.userId,
-    this.phone,
+    this.phoneNumber,
     this.email,
   });
 
   factory Sewer.fromJson(Map<String, dynamic> json) {
     return Sewer(
       id: json['id'] as int,
-      name: json['name'] as String,
+      name: json['sewerCarModel'] as String,
       userId: json['userId'] as int,
-      phone: json['phone'] as String?,
+      companyId: json["companyId"] as int,
+      phoneNumber: json['phoneNumber'] as String?,
       email: json['email'] as String?,
     );
   }
@@ -31,7 +34,8 @@ class Sewer extends Model {
       'id': id,
       'name': name,
       'userId': userId,
-      'phone': phone,
+      'companyId': companyId,
+      'phoneNumber': phoneNumber,
       'email': email,
     };
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vyvoz/pages/home_page.dart';
 import 'package:vyvoz/pages/login_page.dart';
 import 'package:vyvoz/pages/startup_page.dart';
 
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/' : (context) => StartupPage(),
         '/login':(context) => LoginPage(),
+        'home':(context)=>HomePage(),
       },
     );
   }

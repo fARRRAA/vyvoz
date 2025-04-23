@@ -3,10 +3,8 @@ import '../http/user_update_request.dart';
 
 class User extends Model {
   final int id;
-  final String username;
   final String firstName;
   final String lastName;
-  final String? middleName;
   final String? phone;
   final String? email;
   final int roleId;
@@ -17,10 +15,8 @@ class User extends Model {
 
   User({
     required this.id,
-    required this.username,
     required this.firstName,
     required this.lastName,
-    this.middleName,
     this.phone,
     this.email,
     required this.roleId,
@@ -33,10 +29,8 @@ class User extends Model {
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'] as int,
-      username: json['username'] as String,
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
-      middleName: json['middleName'] as String?,
       phone: json['phone'] as String?,
       email: json['email'] as String?,
       roleId: json['roleId'] as int,
@@ -51,10 +45,8 @@ class User extends Model {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'username': username,
       'firstName': firstName,
       'lastName': lastName,
-      'middleName': middleName,
       'phone': phone,
       'email': email,
       'roleId': roleId,
@@ -69,7 +61,6 @@ class User extends Model {
     return UserUpdateRequest(
       firstName: firstName,
       lastName: lastName,
-      middleName: middleName,
       phone: phone,
       email: email,
     );

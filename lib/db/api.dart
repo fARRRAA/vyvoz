@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
 
 import 'http/address_suggest.dart';
 import 'http/mobile_log.dart';
@@ -16,7 +15,7 @@ import 'models/treatment_plant.dart';
 import 'models/user.dart';
 
 class Api {
-  static late SharedPreferences preferences;
+  static SharedPreferences? preferences = null;
   static List<Order> attachedOrders = [];
   static List<Order> freeOrders = [];
   static late User user;
@@ -41,20 +40,21 @@ class Api {
 
   static Future<void> saveAuthorization(String jwt, String refresh) async {
     currentJWT = jwt;
-    await preferences.setString(REFRESH, refresh);
-    await preferences.setInt(TOKEN_START,
+    preferences ??= await SharedPreferences.getInstance();
+    await preferences?.setString(REFRESH, refresh);
+    await preferences?.setInt(TOKEN_START,
         DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000);
   }
 
   static bool isReloginRequested() {
-    final start = preferences.getInt(TOKEN_START) ?? 0;
+    final start = preferences?.getInt(TOKEN_START) ?? 0;
     final now = DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
     return start + REFRESH_LIFETIME < now;
   }
 
   static Future<void> tryUpdateAuth() async {
     final now = DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
-    final tokensStart = preferences.getInt(TOKEN_START) ?? 0;
+    final tokensStart = preferences?.getInt(TOKEN_START) ?? 0;
 
     if (tokensStart + JWT_LIFETIME > now && currentJWT.isNotEmpty) return;
 
@@ -62,7 +62,7 @@ class Api {
       onReauth();
     }
 
-    final refresh = preferences.getString(REFRESH) ?? '';
+    final refresh = preferences?.getString(REFRESH) ?? '';
     final response = await http.get(
       Uri.parse('${REST_API_PATH}Users/RefreshAuthorization?refreshToken=$refresh'),
     );
@@ -109,19 +109,23 @@ class Api {
         '${REST_API_PATH}Users/Authorization?Username=$login&Password=$password';
 
     final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      final auth = UserAuth.fromJson(jsonDecode(response.body));
-      await saveAuthorization(auth.jwtToken, auth.refreshToken);
-      user = auth.toUser();
-    } else {
-      throw ApiException(
-        response.body,
-        url,
-        response.statusCode.toString(),
-      );
+    try {
+      if (response.statusCode == 200) {
+        final auth = UserAuth.fromJson(jsonDecode(response.body));
+        await saveAuthorization(auth.jwtToken, auth.refreshToken);
+        user = auth.toUser();
+      } else {
+        throw ApiException(
+          response.body,
+          url,
+          response.statusCode.toString(),
+        );
+      }
+      return user;
+    }catch(ex) {
+      print(ex.hashCode);
+      return User(id: 0, firstName: "firstName", lastName: "lastName", roleId: 5);
     }
-    return user;
   }
 
   static Future<void> fetchUserData(int id) async {

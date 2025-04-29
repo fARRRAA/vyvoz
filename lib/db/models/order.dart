@@ -7,7 +7,7 @@ class Order extends Model {
   final int? sewerId;
   final int orderStatusId;
   final int wasteVolume;
-  final String? address;
+  final String? adress;
   final String? comment;
   final DateTime? arrivalStartDate;
   final DateTime? arrivalEndDate;
@@ -21,7 +21,7 @@ class Order extends Model {
     required this.sewerId,
     required this.orderStatusId,
     required this.wasteVolume,
-    required this.address,
+    required this.adress,
     this.comment,
     required this.arrivalStartDate,
     this.arrivalEndDate,
@@ -37,7 +37,7 @@ class Order extends Model {
       sewerId: json['sewerId'] as int?,
       orderStatusId: json['orderStatusId'] as int,
       wasteVolume: json['wasteVolume'] as int,
-      address: json['address'] as String?,
+      adress: json['adress'] as String?,
       comment: json['comment'] as String?,
       arrivalStartDate: DateTime.parse(json['arrivalStartDate'] as String),
       arrivalEndDate: json['arrivalEndDate'] != null
@@ -74,7 +74,7 @@ class Order extends Model {
       'sewerId': sewerId,
       'orderStatusId': orderStatusId,
       'wasteVolume': wasteVolume,
-      'address': address,
+      'adress': adress,
       'comment': comment,
       'arrivalStartDate': arrivalStartDate?.toIso8601String(),
       'arrivalEndDate': arrivalEndDate?.toIso8601String(),

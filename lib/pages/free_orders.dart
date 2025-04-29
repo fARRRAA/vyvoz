@@ -3,28 +3,28 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vyvoz/db/api.dart';
 
 import '../db/models/order.dart';
-// === Dummy Data & Models ===
 
 class StatusLineColored extends StatelessWidget {
   final int statusId;
 
   const StatusLineColored({super.key, required this.statusId});
 
-  // Маппинг ID статуса в название и цвет
   static const Map<int, String> stageToString = {
     1: "Назначено",
     2: "Транспортировка",
     3: "Утилизация",
     4: "Выполнено",
-    5: "Отменено"
+    5: "Отменено",
+    6:"Принята"
   };
 
   static const Map<int, Color> stageToColorId = {
     1: Colors.blue,
     2: Colors.purple,
     3: Colors.orange,
-    4: Colors.green,
-    5: Colors.red
+    4: Colors.lightGreen,
+    5: Colors.red,
+    6:Colors.green
   };
 
   @override
@@ -43,7 +43,7 @@ class StatusLineColored extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: const TextStyle(color: Colors.white, fontSize: 14),
+          style: const TextStyle(color: Colors.white, fontSize: 12),
         ),
       ),
     );
@@ -55,7 +55,8 @@ enum OrderStatus {
   transport,
   utilization,
   done,
-  canceled;
+  canceled,
+  accepted;
 
   int get id => index + 1; // assuming 1-based indexing
 }
@@ -65,15 +66,17 @@ Map<int, String> stageToString = {
   2: "Транспортировка",
   3: "Утилизация",
   4: "Выполнено",
-  5: "Отменено"
+  5: "Отменено",
+  6:"Принята"
 };
 
 Map<int, Color> stageToColorId = {
   1: Colors.blue,
   2: Colors.purple,
   3: Colors.orange,
-  4: Colors.green,
-  5: Colors.red
+  4: Colors.lightGreen,
+  5: Colors.red,
+  6:Colors.green
 };
 // === UI Part ===
 
@@ -98,7 +101,7 @@ class _OrdersViewState extends State<OrdersView> {
     filter = (Order o) => o.orderStatusId != OrderStatus.done.id;
     refreshOrders();
   }
-
+//касимовых 70 светлая 25
   void refreshOrders() {
     setState(() {
       localOrders = Api.attachedOrders
@@ -153,7 +156,7 @@ class _OrdersViewState extends State<OrdersView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Статус:", style: TextStyle(fontSize: 12)),
+                      const Text("Статус:", style: TextStyle(fontSize: 14)),
                       const SizedBox(height: 8),
                       Wrap(
                         spacing: 8,
@@ -216,7 +219,7 @@ class ClickableStatusLineColored extends StatelessWidget {
         ),
         child: Text(
           stageToString[statusId] ?? "—",
-          style: const TextStyle(color: Colors.white, fontSize: 14),
+          style: const TextStyle(color: Colors.white, fontSize: 12),
         ),
       ),
     );
@@ -251,7 +254,7 @@ class OrderCard extends StatelessWidget {
                     Icon(Icons.person, size: 20, color: Colors.blue),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -273,7 +276,7 @@ class OrderCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -301,7 +304,7 @@ class OrderCard extends StatelessWidget {
               Divider(thickness: 1, color: Colors.grey[300]),
               const SizedBox(height: 8),
               Text(
-                "${order.arrivalStartDate.toString()}, ${order.getPeriod()}",
+                "${order.getPeriod()}, ${order.getTime()}",
                 style: TextStyle(fontSize: 14, color: Colors.grey),
               )
             ],

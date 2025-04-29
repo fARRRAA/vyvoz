@@ -62,31 +62,54 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildFastOrdersRow() {
-    return Container(
-      height: 120,
-      padding: const EdgeInsets.only(left: 24, bottom: 42),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: _fastOrders.isEmpty ? 1 : _fastOrders.length,
-        itemBuilder: (context, index) {
-          if (_fastOrders.isEmpty) {
-            return const Center(child: Text('На сегодня нет заявок'));
-          }
-          return _buildOrderPreviewCard(_fastOrders[index]);
-        },
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 24, bottom: 8),
+          child: Text(
+            'Заявки на сегодня',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        Container(
+          height: 130,
+          padding: const EdgeInsets.only(left: 24, bottom: 42),
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: _fastOrders.isEmpty ? 1 : _fastOrders.length,
+            itemBuilder: (context, index) {
+              if (_fastOrders.isEmpty) {
+                return const Center(child: Text('На сегодня нет заявок'));
+              }
+              return _buildOrderPreviewCard(_fastOrders[index]);
+            },
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildOrderPreviewCard(dynamic order) {
+    String timeRange = '';
+    if (order.arrivalStartDate != null && order.arrivalEndDate != null) {
+      final start = order.arrivalStartDate;
+      final end = order.arrivalEndDate;
+      final startStr = DateFormat('HH:mm').format(start);
+      final endStr = DateFormat('HH:mm').format(end);
+      timeRange = '$startStr - $endStr';
+    }
     return Card(
       margin: const EdgeInsets.only(right: 10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
       child: Container(
-        width: 220,
-        padding: const EdgeInsets.all(12),
+        width: 200,
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: _getStatusColor(order.orderStatusId),
           borderRadius: BorderRadius.circular(16),
@@ -99,39 +122,54 @@ class _HomePageState extends State<HomePage> {
               'Вывоз ЖБО',
               style: TextStyle(
                 fontWeight: FontWeight.w600,
-                fontSize: 15,
+                fontSize: 14,
                 color: Colors.white,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: Text(
-                    DateFormat('d MMMM yyyy').format(order.arrivalStartDate),
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: Colors.white,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(width: 8),
                 Flexible(
                   child: Text(
                     order.getPeriod(),
                     style: const TextStyle(
-                      fontSize: 11,
+                      fontSize: 12,
                       color: Colors.white,
                     ),
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    timeRange,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+
               ],
             ),
-            const SizedBox(height: 10),
-            _buildStatusLine(order.getStatusString()),
+            const SizedBox(height: 6),
+            Flexible(
+              child: Text(
+                order.getStatusString(),
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
       ),
@@ -301,7 +339,6 @@ class _HomePageState extends State<HomePage> {
   Widget _buildOrderLine(dynamic order) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 5),
-      elevation: 4,
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -316,16 +353,22 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text(
-                    order.adress ?? "",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 10,
-                      height: 1.3,
+               Expanded(
+                    child: SizedBox(
+                      width: 200, // задайте нужную вам ширину
+                      child: Text(
+                        order.adress ?? "",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w300,
+                          fontSize: 10,
+                          height: 1.3,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true, // явно разрешаем перенос
+                      ),
                     ),
                   ),
-                ),
                 Text(
                   'Объем ${order.wasteVolume} m³',
                   style: const TextStyle(

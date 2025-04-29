@@ -39,6 +39,7 @@ dependencies:
   intl: ^0.20.2
   flutter_svg: ^2.1.0
   badges: ^3.1.2
+  url_launcher: ^6.2.5 # или последняя версия
 flutter_svg: ^2.0.7
 
 dev_dependencies:

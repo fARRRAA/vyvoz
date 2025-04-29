@@ -15,7 +15,8 @@ class Order extends Model {
   final double longitude;
   final int? municipalityId;
   final bool isPayed;
-
+  final DateTime timeOfPublication;
+  final bool selfCreated;
   Order({
     required this.id,
     required this.sewerId,
@@ -29,6 +30,8 @@ class Order extends Model {
     required this.longitude,
     required this.municipalityId,
     required this.isPayed,
+    required this.timeOfPublication,
+    required this.selfCreated
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
@@ -47,6 +50,8 @@ class Order extends Model {
       longitude: (json['longitude'] as num).toDouble(),
       municipalityId: json['municipalityId'] as int?,
       isPayed: json['isPayed'] as bool,
+        timeOfPublication: DateTime.parse(json["timeOfPublication"] as String),
+      selfCreated: json["selfCreated"] as bool,
     );
   }
 
@@ -82,6 +87,7 @@ class Order extends Model {
       'longitude': longitude,
       'municipalityId': municipalityId,
       'isPayed': isPayed,
+      'selfCreated': selfCreated
     };
   }
 }

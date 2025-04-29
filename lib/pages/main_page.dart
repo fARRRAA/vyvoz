@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:vyvoz/pages/free_orders.dart';
 import 'package:vyvoz/pages/home_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -14,7 +15,7 @@ class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
   String title = "Главная";
 
-  final pages = [HomePage()];
+  final pages = [HomePage(), OrdersView()];
 
   void _updateTitle(int index) {
     setState(() {

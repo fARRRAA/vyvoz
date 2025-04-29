@@ -85,44 +85,52 @@ class _HomePageState extends State<HomePage> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Container(
-        width: 250,
-        padding: const EdgeInsets.all(16),
+        width: 220,
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: _getStatusColor(order.orderStatusId),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               'Вывоз ЖБО',
               style: TextStyle(
                 fontWeight: FontWeight.w600,
-                fontSize: 16,
+                fontSize: 15,
                 color: Colors.white,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  DateFormat('d MMMM yyyy').format(order.arrivalStartDate),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
+                Expanded(
+                  child: Text(
+                    DateFormat('d MMMM yyyy').format(order.arrivalStartDate),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Colors.white,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Text(
-                  order.getPeriod(),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    order.getPeriod(),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Colors.white,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
             _buildStatusLine(order.getStatusString()),
           ],
         ),
@@ -310,7 +318,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Expanded(
                   child: Text(
-                    order.address ?? "",
+                    order.adress ?? "",
                     style: const TextStyle(
                       fontWeight: FontWeight.w300,
                       fontSize: 10,

@@ -13,6 +13,7 @@ import 'models/order_status.dart';
 import 'models/sewer.dart';
 import 'models/treatment_plant.dart';
 import 'models/user.dart';
+import 'models/notification.dart';
 
 class Api {
   static SharedPreferences? preferences = null;
@@ -304,7 +305,7 @@ class Api {
   static Future<void> createOrder({
     required String municipalityName,
     required int wasteVolume,
-    required String address,
+    required String adress,
     required String comment,
     required DateTime timestamp,
     required double longitude,
@@ -314,7 +315,7 @@ class Api {
     final body = {
       'comment': comment,
       'wasteVolume': wasteVolume,
-      'adress': address,
+      'adress': adress,
       'sewerId': user.id,
       'arrivalStartDate': timestamp.toIso8601String(),
       'latitude': latitude,
@@ -470,6 +471,27 @@ class Api {
   static void onReauth() {}
 
   static void refreshOrders() {}
+
+  static Future<List<Notification>> getNotifications() async {
+    await tryUpdateAuth();
+    final url = '${REST_API_PATH}Notifications/GetNotifications';
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer $currentJWT'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(
+        response.body,
+        url,
+        response.statusCode.toString(),
+      );
+    }
+
+    return (jsonDecode(response.body) as List)
+        .map((json) => Notification.fromJson(json))
+        .toList();
+  }
 }
 
 class ApiException implements Exception {

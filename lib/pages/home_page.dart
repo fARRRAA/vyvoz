@@ -51,9 +51,9 @@ class _HomePageState extends State<HomePage> {
           
       _fastOrders = Api.attachedOrders.where((order) {
         final now = DateTime.now();
-        return order.arrivalStartDate.year == now.year &&
-            order.arrivalStartDate.month == now.month &&
-            order.arrivalStartDate.day == now.day &&
+        return order.arrivalStartDate!.year == now.year &&
+            order.arrivalStartDate!.month == now.month &&
+            order.arrivalStartDate!.day == now.day &&
             (order.orderStatusId == OrderStatus.attached.id ||
                 order.orderStatusId == OrderStatus.transport.id ||
                 order.orderStatusId == OrderStatus.utilization.id);
@@ -107,9 +107,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  DateFormat('d MMMM yyyy').format(
-                    DateTime.parse(order.arrivalStartDate),
-                  ),
+                  DateFormat('d MMMM yyyy').format(order.arrivalStartDate),
                   style: const TextStyle(
                     fontSize: 12,
                     color: Colors.white,
@@ -312,7 +310,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Expanded(
                   child: Text(
-                    order.address,
+                    order.address ?? "",
                     style: const TextStyle(
                       fontWeight: FontWeight.w300,
                       fontSize: 10,

@@ -49,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
         final sewer = await Api.getSewerById();
         Api.sewer = sewer;
         await prefs.setInt('sewerId', sewer.id);
-        Api.fetchSewerCollection();
+        await Api.fetchSewerCollection();
         Navigator.pushReplacementNamed(context, '/home');
       } catch (ex) {
         ScaffoldMessenger.of(context).showSnackBar(

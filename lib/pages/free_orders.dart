@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vyvoz/db/api.dart';
+import 'order_page.dart';
 
 import '../db/models/order.dart';
 
@@ -15,7 +16,7 @@ class StatusLineColored extends StatelessWidget {
     3: "Утилизация",
     4: "Выполнено",
     5: "Отменено",
-    6:"Принята"
+    6: "Принята"
   };
 
   static const Map<int, Color> stageToColorId = {
@@ -24,7 +25,7 @@ class StatusLineColored extends StatelessWidget {
     3: Colors.orange,
     4: Colors.lightGreen,
     5: Colors.red,
-    6:Colors.green
+    6: Colors.green
   };
 
   @override
@@ -58,7 +59,7 @@ enum OrderStatus {
   canceled,
   accepted;
 
-  int get id => index + 1; // assuming 1-based indexing
+  int get id => index + 1;
 }
 
 Map<int, String> stageToString = {
@@ -67,7 +68,7 @@ Map<int, String> stageToString = {
   3: "Утилизация",
   4: "Выполнено",
   5: "Отменено",
-  6:"Принята"
+  6: "Принята"
 };
 
 Map<int, Color> stageToColorId = {
@@ -76,9 +77,8 @@ Map<int, Color> stageToColorId = {
   3: Colors.orange,
   4: Colors.lightGreen,
   5: Colors.red,
-  6:Colors.green
+  6: Colors.green
 };
-// === UI Part ===
 
 class OrdersView extends StatefulWidget {
   const OrdersView({Key? key}) : super(key: key);
@@ -101,7 +101,7 @@ class _OrdersViewState extends State<OrdersView> {
     filter = (Order o) => o.orderStatusId != OrderStatus.done.id;
     refreshOrders();
   }
-//касимовых 70 светлая 25
+
   void refreshOrders() {
     setState(() {
       localOrders = Api.attachedOrders
@@ -181,9 +181,20 @@ class _OrdersViewState extends State<OrdersView> {
                 itemCount: localOrders.length,
                 itemBuilder: (context, index) {
                   var order = localOrders[index];
-                  return OrderCard(order: order, onCardTap: (){
-                    
-                  });
+                  return OrderCard(
+                    order: order,
+                    onCardTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => OrderPage(
+                            orderId: order.id,
+                            isProof: false,
+                          ),
+                        ),
+                      ).then((_) => refreshOrders());
+                    },
+                  );
                 },
               ),
             ),
@@ -251,14 +262,14 @@ class OrderCard extends StatelessWidget {
                   StatusLineColored(statusId: order.orderStatusId),
                   const Spacer(),
                   if (order.selfCreated)
-                    Icon(Icons.person, size: 20, color: Colors.blue),
+                    const Icon(Icons.person, size: 20, color: Colors.blue),
                 ],
               ),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     "Вывоз ЖБО",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -266,7 +277,7 @@ class OrderCard extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.map, color: Colors.blue),
+                    icon: const Icon(Icons.map, color: Colors.blue),
                     onPressed: () async {
                       final String link =
                           "https://yandex.ru/maps/?rtext=~${order.latitude}%2C${order.longitude}";
@@ -286,7 +297,7 @@ class OrderCard extends StatelessWidget {
                       order.adress ?? "",
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -295,7 +306,7 @@ class OrderCard extends StatelessWidget {
                     child: Text(
                       "Объем ${order.wasteVolume} м³",
                       textAlign: TextAlign.right,
-                      style: TextStyle(fontSize: 14),
+                      style: const TextStyle(fontSize: 14),
                     ),
                   ),
                 ],
@@ -304,8 +315,8 @@ class OrderCard extends StatelessWidget {
               Divider(thickness: 1, color: Colors.grey[300]),
               const SizedBox(height: 8),
               Text(
-                "${order.getPeriod()}, ${order.getTime()}",
-                style: TextStyle(fontSize: 14, color: Colors.grey),
+                "${order.getPeriod()}, ${order.getStartTime()}",
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
               )
             ],
           ),

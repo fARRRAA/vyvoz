@@ -58,9 +58,13 @@ class Order extends Model {
   String getPeriod() {
     return "${DateFormat('d MMMM yyyy').format(arrivalStartDate!)}";
   }
-String getTime(){
+String getStartTime(){
 
     return "${DateFormat('HH:mm').format(arrivalStartDate!)}";
+}
+String getEndTime(){
+
+    return "${DateFormat('HH:mm').format(arrivalEndDate!)}";
 }
   static Map<int, String> statuses = {
     1: "Новый заказ",

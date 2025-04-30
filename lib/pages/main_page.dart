@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:vyvoz/pages/attached_orders.dart';
 import 'package:vyvoz/pages/free_orders.dart';
 import 'package:vyvoz/pages/home_page.dart';
+import 'package:vyvoz/pages/profile_page.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -15,7 +17,7 @@ class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
   String title = "Главная";
 
-  final pages = [HomePage(), OrdersView()];
+  final pages = [HomePage(), AttachedOrders(),FreeOrdersPage(),ProfilePage()];
 
   void _updateTitle(int index) {
     setState(() {
@@ -28,7 +30,7 @@ class _MainPageState extends State<MainPage> {
           title = "Заявки";
           break;
         case 2:
-          title = "Мои смены";
+          title = "Свободные заявки";
           break;
         case 3:
           title = "Профиль";

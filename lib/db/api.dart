@@ -22,6 +22,7 @@ class Api {
   static late User user;
   static List<TreatmentPlant> treatmentPlants = [];
   static late Sewer sewer;
+  static Function onRefreshOrders = () {};
 
   static const String REST_API_PATH = 'http://95.105.78.72:8080/api/';
   static const String REFRESH = 'refresh';
@@ -94,7 +95,7 @@ class Api {
           .toList();
 
       freeOrders = collection
-          .where((order) => order.orderStatusId == OrderStatus.new_)
+          .where((order) => order.orderStatusId == 1)
           .toList();
     } else {
       throw ApiException(
@@ -346,7 +347,7 @@ class Api {
     freeOrders.remove(order);
     attachedOrders.add(order);
     attachedOrders = attachedOrders.toSet().toList();
-    refreshOrders();
+    onRefreshOrders();
   }
 
   static Future<List<TreatmentPlant>> getPlantsForSewer() async {
@@ -469,8 +470,6 @@ class Api {
   }
 
   static void onReauth() {}
-
-  static void refreshOrders() {}
 
   static Future<List<Notification>> getNotifications() async {
     await tryUpdateAuth();

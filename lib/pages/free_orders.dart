@@ -1,125 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:vyvoz/db/api.dart';
+import 'package:vyvoz/db/models/order.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'order_page.dart';
 
-import '../db/models/order.dart';
-
-class StatusLineColored extends StatelessWidget {
-  final int statusId;
-
-  const StatusLineColored({super.key, required this.statusId});
-
-  static const Map<int, String> stageToString = {
-    1: "Назначено",
-    2: "Транспортировка",
-    3: "Утилизация",
-    4: "Выполнено",
-    5: "Отменено",
-    6: "Принята"
-  };
-
-  static const Map<int, Color> stageToColorId = {
-    1: Colors.blue,
-    2: Colors.purple,
-    3: Colors.orange,
-    4: Colors.lightGreen,
-    5: Colors.red,
-    6: Colors.green
-  };
+class FreeOrdersPage extends StatefulWidget {
+  const FreeOrdersPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final text = stageToString[statusId] ?? "Неизвестно";
-    final color = stageToColorId[statusId] ?? Colors.grey;
-
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      elevation: 0,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(color: Colors.white, fontSize: 12),
-        ),
-      ),
-    );
-  }
+  State<FreeOrdersPage> createState() => _FreeOrdersPageState();
 }
 
-enum OrderStatus {
-  attached,
-  transport,
-  utilization,
-  done,
-  canceled,
-  accepted;
-
-  int get id => index + 1;
-}
-
-Map<int, String> stageToString = {
-  1: "Назначено",
-  2: "Транспортировка",
-  3: "Утилизация",
-  4: "Выполнено",
-  5: "Отменено",
-  6: "Принята"
-};
-
-Map<int, Color> stageToColorId = {
-  1: Colors.blue,
-  2: Colors.purple,
-  3: Colors.orange,
-  4: Colors.lightGreen,
-  5: Colors.red,
-  6: Colors.green
-};
-
-class OrdersView extends StatefulWidget {
-  const OrdersView({Key? key}) : super(key: key);
-
-  @override
-  State<OrdersView> createState() => _OrdersViewState();
-}
-
-class _OrdersViewState extends State<OrdersView> {
-  late List<Order> localOrders;
-  late Function filter;
-  late int selectedStatusId;
-  late Color selectedColor = Colors.blue;
-  late Color unselectedColor = Colors.grey;
+class _FreeOrdersPageState extends State<FreeOrdersPage> {
+  List<Order> localOrders = [];
 
   @override
   void initState() {
     super.initState();
-    selectedStatusId = -1;
-    filter = (Order o) => o.orderStatusId != OrderStatus.done.id;
-    refreshOrders();
+    _loadOrders();
+    Api.onRefreshOrders = _loadOrders;
   }
 
-  void refreshOrders() {
+  void _loadOrders() {
     setState(() {
-      localOrders = Api.attachedOrders
-          .where(filter as bool Function(Order))
-          .toList()
-        ..sort((a, b) => b.timeOfPublication.compareTo(a.timeOfPublication));
-    });
-  }
-
-  void onFilterSelected(int statusId) {
-    setState(() {
-      selectedStatusId = statusId;
-      if (statusId == -1) {
-        filter = (Order o) => o.orderStatusId != OrderStatus.done.id;
-      } else {
-        filter = (Order o) => o.orderStatusId == statusId;
-      }
-      refreshOrders();
+      localOrders = Api.freeOrders.reversed.toList();
     });
   }
 
@@ -127,60 +31,21 @@ class _OrdersViewState extends State<OrdersView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    onFilterSelected(-1);
-                  },
-                  child: Text(
-                    "Все",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: selectedStatusId == -1
-                          ? selectedColor
-                          : unselectedColor,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                const VerticalDivider(
-                    width: 1, thickness: 1, color: Colors.grey),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("Статус:", style: TextStyle(fontSize: 14)),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        children: [
-                          for (var status in OrderStatus.values)
-                            ClickableStatusLineColored(
-                              statusId: status.id,
-                              onClick: () => onFilterSelected(status.id),
-                              isSelected: selectedStatusId == status.id,
-                            )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 44, 24, 32),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
             ),
-            const SizedBox(height: 12),
-            Expanded(
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
               child: ListView.builder(
                 itemCount: localOrders.length,
                 itemBuilder: (context, index) {
-                  var order = localOrders[index];
+                  final order = localOrders[index];
                   return OrderCard(
                     order: order,
                     onCardTap: () {
@@ -190,48 +55,17 @@ class _OrdersViewState extends State<OrdersView> {
                           builder: (context) => OrderPage(
                             orderId: order.id,
                             isProof: false,
+                            isFreeOrder: true,
                           ),
                         ),
-                      ).then((_) => refreshOrders());
+                      ).then((_) => _loadOrders());
                     },
                   );
                 },
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ClickableStatusLineColored extends StatelessWidget {
-  final int statusId;
-  final VoidCallback onClick;
-  final bool isSelected;
-
-  const ClickableStatusLineColored({
-    Key? key,
-    required this.statusId,
-    required this.onClick,
-    required this.isSelected,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onClick,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-        decoration: BoxDecoration(
-          color: stageToColorId[statusId] ?? Colors.grey,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          stageToString[statusId] ?? "—",
-          style: const TextStyle(color: Colors.white, fontSize: 12),
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -241,7 +75,11 @@ class OrderCard extends StatelessWidget {
   final Order order;
   final VoidCallback onCardTap;
 
-  const OrderCard({Key? key, required this.order, required this.onCardTap}) : super(key: key);
+  const OrderCard({
+    super.key,
+    required this.order,
+    required this.onCardTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -281,7 +119,6 @@ class OrderCard extends StatelessWidget {
                     onPressed: () async {
                       final String link =
                           "https://yandex.ru/maps/?rtext=~${order.latitude}%2C${order.longitude}";
-
                       await launchUrl(Uri.parse(link));
                     },
                   ),
@@ -317,7 +154,7 @@ class OrderCard extends StatelessWidget {
               Text(
                 "${order.getPeriod()}, ${order.getStartTime()}",
                 style: const TextStyle(fontSize: 14, color: Colors.grey),
-              )
+              ),
             ],
           ),
         ),
@@ -325,3 +162,49 @@ class OrderCard extends StatelessWidget {
     );
   }
 }
+
+class StatusLineColored extends StatelessWidget {
+  final int statusId;
+
+  const StatusLineColored({super.key, required this.statusId});
+
+  static const Map<int, String> stageToString = {
+    1: "Новый заказ",
+    2: "Транспортировка",
+    3: "Утилизация",
+    4: "Выполнено",
+    5: "Отменено",
+    6: "Принята"
+  };
+
+  static const Map<int, Color> stageToColorId = {
+    1: Colors.blue,
+    2: Colors.purple,
+    3: Colors.orange,
+    4: Colors.lightGreen,
+    5: Colors.red,
+    6: Colors.green
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final text = stageToString[statusId] ?? "Неизвестно";
+    final color = stageToColorId[statusId] ?? Colors.grey;
+
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: 0,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(color: Colors.white, fontSize: 12),
+        ),
+      ),
+    );
+  }
+} 

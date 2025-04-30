@@ -26,6 +26,32 @@ class User extends Model {
     this.municipalityName,
   });
 
+  User copyWith({
+    int? id,
+    String? firstName,
+    String? lastName,
+    String? phone,
+    String? email,
+    int? roleId,
+    String? companyName,
+    int? companyId,
+    int? municipalityId,
+    String? municipalityName,
+  }) {
+    return User(
+      id: id ?? this.id,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      phone: phone ?? this.phone,
+      email: email ?? this.email,
+      roleId: roleId ?? this.roleId,
+      companyName: companyName ?? this.companyName,
+      companyId: companyId ?? this.companyId,
+      municipalityId: municipalityId ?? this.municipalityId,
+      municipalityName: municipalityName ?? this.municipalityName,
+    );
+  }
+
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'] as int,

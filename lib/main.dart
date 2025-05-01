@@ -3,6 +3,10 @@ import 'package:vyvoz/pages/home_page.dart';
 import 'package:vyvoz/pages/login_page.dart';
 import 'package:vyvoz/pages/main_page.dart';
 import 'package:vyvoz/pages/startup_page.dart';
+import 'package:vyvoz/pages/route/route_page.dart';
+import 'package:vyvoz/pages/route/treatment_plants_selector_page.dart';
+import 'package:vyvoz/pages/route/route_payment_page.dart';
+import 'package:vyvoz/pages/route/route_finish_page.dart';
 
 void main()  {
 
@@ -40,6 +44,11 @@ class MyApp extends StatelessWidget {
         '/' : (context) => StartupPage(),
         '/login':(context) => LoginPage(),
         '/home':(context)=>MainPage(),
+        // Маршруты для завершения рейса
+        '/route': (context) => RoutePage(),
+        '/treatment_plants_selector': (context) => TreatmentPlantsSelectorPage(),
+        '/route_payment': (context) => RoutePaymentPage(),
+        '/route_finish': (context) => RouteFinishPage(),
       },
     );
   }

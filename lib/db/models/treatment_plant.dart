@@ -2,18 +2,18 @@ import 'model.dart';
 
 class TreatmentPlant extends Model {
   final int id;
+  final String? adress;
   final String name;
-  final int municipalityId;
-  final String? address;
   final double? latitude;
   final double? longitude;
-
+  final double tariff=200;
+  final int? dailyLimit;
   TreatmentPlant({
     required this.id,
     required this.name,
-    required this.municipalityId,
-    this.address,
+    this.adress,
     this.latitude,
+    this.dailyLimit,
     this.longitude,
   });
 
@@ -21,10 +21,10 @@ class TreatmentPlant extends Model {
     return TreatmentPlant(
       id: json['id'] as int,
       name: json['name'] as String,
-      municipalityId: json['municipalityId'] as int,
-      address: json['address'] as String?,
+      adress: json['adress'] as String?,
       latitude: json['latitude'] != null ? (json['latitude'] as num).toDouble() : null,
       longitude: json['longitude'] != null ? (json['longitude'] as num).toDouble() : null,
+      dailyLimit: json['dailyLimit'] as int
     );
   }
 
@@ -33,9 +33,9 @@ class TreatmentPlant extends Model {
     return {
       'id': id,
       'name': name,
-      'municipalityId': municipalityId,
-      'address': address,
+      'adress': adress,
       'latitude': latitude,
+      'dailyLimit':dailyLimit,
       'longitude': longitude,
     };
   }

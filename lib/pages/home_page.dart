@@ -226,22 +226,11 @@ class _HomePageState extends State<HomePage> {
                     Text(
                       _topHeader,
                       style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                    const Text(
-                      'Главная',
-                      style: TextStyle(
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
                       ),
                     ),
                   ],
-                ),
-                IconButton(
-                  icon: const Icon(Icons.notifications_outlined),
-                  onPressed: () => Navigator.pushNamed(context, '/notifications'),
                 ),
               ],
             ),

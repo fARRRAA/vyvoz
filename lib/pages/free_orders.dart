@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vyvoz/db/api.dart';
 import 'package:vyvoz/db/models/order.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 import 'order_page.dart';
 
 class FreeOrdersPage extends StatefulWidget {
@@ -134,7 +136,8 @@ class OrderCard extends StatelessWidget {
                       order.adress ?? "",
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w300),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -207,4 +210,4 @@ class StatusLineColored extends StatelessWidget {
       ),
     );
   }
-} 
+}

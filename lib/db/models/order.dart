@@ -17,6 +17,13 @@ class Order extends Model {
   final bool isPayed;
   final DateTime timeOfPublication;
   final bool selfCreated;
+  late String userFirstName;
+  late String userLastName;
+  late String? firstName;
+  late String? lastName;
+  late String phoneNumber;
+  late String userPhone;
+
   Order({
     required this.id,
     required this.sewerId,
@@ -31,7 +38,13 @@ class Order extends Model {
     required this.municipalityId,
     required this.isPayed,
     required this.timeOfPublication,
-    required this.selfCreated
+    required this.selfCreated,
+    required this.userFirstName,
+    required this.userLastName,
+    this.firstName,
+    this.lastName,
+    required this.phoneNumber,
+    required this.userPhone,
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
@@ -50,22 +63,34 @@ class Order extends Model {
       longitude: (json['longitude'] as num).toDouble(),
       municipalityId: json['municipalityId'] as int?,
       isPayed: json['isPayed'] as bool,
-        timeOfPublication: DateTime.parse(json["timeOfPublication"] as String),
+      timeOfPublication: DateTime.parse(json["timeOfPublication"] as String),
       selfCreated: json["selfCreated"] as bool,
+      userFirstName: json["userFirstName"] as String,
+      userLastName: json["userLastName"] as String,
+      userPhone: json["userPhone"] as String,
+      phoneNumber: json["phoneNumber"] as String,
+      lastName: json["lastName"] as String?,
+      firstName: json["firstName"] as String?,
+      
     );
+  }
+
+  String get formattedDate {
+    return DateFormat('d.MM.yyyy').format(arrivalStartDate!);
   }
 
   String getPeriod() {
     return "${DateFormat('d MMMM yyyy').format(arrivalStartDate!)}";
   }
-String getStartTime(){
 
+  String getStartTime() {
     return "${DateFormat('HH:mm').format(arrivalStartDate!)}";
-}
-String getEndTime(){
+  }
 
+  String getEndTime() {
     return "${DateFormat('HH:mm').format(arrivalEndDate!)}";
-}
+  }
+
   static Map<int, String> statuses = {
     1: "Новый заказ",
     2: "Транспортировка",
@@ -78,7 +103,7 @@ String getEndTime(){
   String getStatusString() {
     return statuses[orderStatusId]!;
   }
-  
+
   @override
   Map<String, dynamic> toJson() {
     return {
